@@ -1,0 +1,22 @@
+{
+  "name": "aegisvpn-cli",
+  "version": "1.0.0",
+  "description": "AegisVPN Production CLI Client & OS Network Kill Switch Engine",
+  "main": "dist/index.js",
+  "bin": {
+    "aegisvpn": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "commander": "^13.0.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
