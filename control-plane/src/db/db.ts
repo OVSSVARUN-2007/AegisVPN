@@ -269,4 +269,5 @@ class AegisDatabase {
 }
 
 export const db = new AegisDatabase();
-db.initialize();
+export const dbReady = db.initialize();
+

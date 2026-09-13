@@ -1,0 +1,20 @@
+# Node dependencies
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+build/
+**/build/
+.env
+.env.local
+**/env.local
+
+# Logs
+*.log
+npm-debug.log*
+**/npm-debug.log*
+
+# OS / Temporary
+.DS_Store
+*.tmp
+.aegisvpn-session.json

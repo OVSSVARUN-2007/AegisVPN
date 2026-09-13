@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  control-plane:
+    build:
+      context: ./control-plane
+      dockerfile: ../Dockerfile.control-plane
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - JWT_SECRET=aegisvpn-production-super-secret-jwt-key-32bytes
+      - JWT_REFRESH_SECRET=aegisvpn-production-refresh-secret-jwt-key-32bytes
+    restart: always
+
+  vpn-node-de:
+    build:
+      context: ./server-node
+      dockerfile: ../Dockerfile.vpn-node
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - SERVER_ID=srv-de-01
+      - CONTROL_PLANE_URL=http://control-plane:4000/api/v1
+    depends_on:
+      - control-plane
+    restart: always
+
+  client-web:
+    build:
+      context: ./client
+      dockerfile: ../Dockerfile.client-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - control-plane
+    restart: always
