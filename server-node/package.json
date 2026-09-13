@@ -1,0 +1,19 @@
+{
+  "name": "aegisvpn-server-node",
+  "version": "1.0.0",
+  "description": "AegisVPN Server Node Daemon (WireGuard, Firewall NAT, DNS, Health Reporter)",
+  "main": "dist/agent.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/agent.js",
+    "dev": "ts-node src/agent.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
