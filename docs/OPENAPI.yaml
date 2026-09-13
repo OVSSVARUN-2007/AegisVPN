@@ -1,0 +1,169 @@
+openapi: 3.0.3
+info:
+  title: AegisVPN Control Plane API
+  version: 1.0.0
+  description: Production-grade REST API for AegisVPN zero-trust Control Plane.
+servers:
+  - url: http://localhost:4000/api/v1
+    description: Development Control Plane Server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '201':
+          description: Account created successfully
+        '400':
+          description: Invalid input or user exists
+  /auth/login:
+    post:
+      summary: Authenticate user and receive JWT tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  user:
+                    type: object
+  /auth/refresh:
+    post:
+      summary: Rotate refresh token and issue new access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+  /devices:
+    get:
+      summary: List registered devices for current user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of user devices
+    post:
+      summary: Register a new device with Curve25519 public key
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, platform, publicKey]
+              properties:
+                name:
+                  type: string
+                platform:
+                  type: string
+                publicKey:
+                  type: string
+      responses:
+        '201':
+          description: Device registered
+  /devices/{id}/revoke:
+    post:
+      summary: Revoke device and immediately terminate active WireGuard peers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Device revoked successfully
+  /servers:
+    get:
+      summary: List all active VPN server locations and health status
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of VPN servers with latency scores and peer load
+  /servers/smart-select:
+    get:
+      summary: Automatically select healthiest and fastest VPN server node
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Recommended optimal server node
+  /peers/config:
+    post:
+      summary: Generate dynamic WireGuard configuration profile (.conf)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceId, serverId]
+              properties:
+                deviceId:
+                  type: string
+                serverId:
+                  type: string
+      responses:
+        '200':
+          description: Generated WireGuard profile
+  /diagnostics/leak-test:
+    get:
+      summary: Diagnostic endpoint for verifying client public IP and DNS leak protection
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Diagnostic leak check results
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
